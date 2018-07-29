@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="http://d3js.org/queue.v1.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="d3-tip.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body> 
+  <div id="carouselExampleControls" class="carousel slide" data-ride="false" data-wrap="false" data-interval="false">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <h1 onclick="show()">About the Visualization</h1>
+          <div class="description">
+          <p>
+            I was always curious about global happiness. While I have my own theories on this topic, 
+            I decided to use data and data visualization to hopefully help answer some of the questions regarding happpiness. 
+            Using the Global Happiness Survey dataset found on Kaggle, I hoped to answer two questions: Which countries 
+            and continents are happiest? Does a country's financial power contribute to its citizen's happiness? 
+          </p>
+          <p>
+            To best narrate and convey the information as well as my own interpretation and understanding gained from the data, I 
+            chose the interactive slideshow. I felt that this visual structure was the best because I can present the audience
+            with the visualization, which they can filter and play around with, and provide my own analysis derived from the same 
+            visualization. 
+          </p>
+          <p>
+            There are 3 scenes in my interactive slideshow: a choropleth, a bar chart, and a scatterplot. Users can navigate 
+            through different scenes by clicking on the leftward and rightward triggers located on each end of the screen. Within
+            the choropleth scene, users have more triggers to change the data that the choropleth contains, which is both intuitive
+            and conveys additional interesting information.
+          </p>
+          <p>
+            I really wanted to keep the annotation consistent, so I decided to use the same tooltip throughout all the scenes. The
+            user can hover over each country in the choropleth, the bars in the bar chart, and the points in the scatterplot and will 
+            receive the same tooltip design. When the user puts their mouse on a data point in any of the visualizations, it will show
+            the tool tip with important data, and the tool tip will disappear once the user removes their mouse from the data point.
+          </p>
+          <p>
+            There are two parameters in this interactive slideshow. The first is the slide state, which can be controlled by the slide 
+            controls. The second is the years in the choropleth scene, in which the users can to display different data from different
+            years.
+          </p>
+          <p>
+            Closely related to the parameters, the triggers are also twofold. The first one controls going forward and backward in the 
+            slideshow, while the second trigger controls the year of the data shown in the choropleth.
+          </p>
+
+          </div>
+    <script>
+      function show() {
+        var x = document.getElementsByClassName("description");
+        x[0].style.display = "block";
+      }
+  </script>
+        </div>
+        <div class="carousel-item">
+          <h2 id="maptitle">2015 Happiness Scores in Countries</h2>
+          <div class="slide1">
+            <script src="test.js"></script>
+          </div>
+          <div class="btn-group" role="group" aria-label="Basic example">
+              <button type="button" class="btn btn-secondary" value="2015" onclick="get_map(this.value)">2015</button>
+              <button type="button" class="btn btn-secondary" value="2016" onclick="get_map(this.value)">2016</button>
+              <button type="button" class="btn btn-secondary" value="2017" onclick="get_map(this.value)">2017</button>
+            </div>
+        <p>(Black means no data was available in that country.)</p>
+        </div>
+        <div class="carousel-item">
+          <h2>Average Happiness Scores in Different Continents/Years</h2>
+          <div class="slide2">
+              <script>
+    var svg1 = d3.select(".slide2").append("svg").attr("width", 1100).attr("height", 450),
+    margin = {top: 20, right: 20, bottom: 30, left: 110},
+    width = +svg1.attr("width") - margin.left - margin.right,
+    height = +svg1.attr("height") - margin.top - margin.bottom,
+    g = svg1.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x0 = d3.scaleBand()
+    .rangeRound([0, width])
+    .paddingInner(0.1);
+
+var x1 = d3.scaleBand()
+    .padding(0.05);
+
+var y = d3.scaleLinear()
+    .rangeRound([height, 0]);
+
+var z = d3.scaleOrdinal()
+    .range(["#2171b5", "#238b45", "#d94701"]);
+
+var tip1 = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    console.log(d)
+    return "<strong>Year:</strong>" + " 20" + d.key.substring(5,7) + "<br><strong>Average Happiness Score: </strong>" + d.value.toFixed(3);
+  });
+  
+  svg1.call(tip1);
+
+d3.csv("data/data1.csv", function(d, i, columns) {
+  for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
+  return d;
+}, function(error, data) {
+  if (error) throw error;
+
+  var keys = data.columns.slice(1);
+
+  x0.domain(data.map(function(d) { return d.Region; }));
+  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+  y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
+
+  g.append("g")
+    .selectAll("g")
+    .data(data)
+    .enter().append("g")
+      .attr("transform", function(d) { return "translate(" + x0(d.Region) + ",0)"; })
+    .selectAll("rect")
+    .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
+    .enter().append("rect")
+      .attr("x", function(d) { return x1(d.key); })
+      .attr("y", function(d) { return y(d.value); })
+      .attr("width", x1.bandwidth())
+      .attr("height", function(d) { return height - y(d.value); })
+      .attr("fill", function(d) { return z(d.key); })
+      .on('mouseover', tip1.show)
+      .on('mouseout', tip1.hide);
+
+  g.append("g")
+      .attr("class", "axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x0));
+
+  g.append("g")
+      .attr("class", "axis")
+      .call(d3.axisLeft(y).ticks(null, "s"))
+    .append("text")
+      .attr("x", 2)
+      .attr("y", y(y.ticks().pop()) + 0.5)
+      .attr("dy", "0.32em")
+      .attr("fill", "#000")
+      .attr("font-weight", "bold")
+      .attr("text-anchor", "start")
+      .text("Average Happiness Score");
+
+  var legend = g.append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end")
+    .selectAll("g")
+    .data(keys.slice().reverse())
+    .enter().append("g")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 19)
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", z);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .text(function(d) { return "20" + d.substring(5,7);});
+});
+                  </script>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <h1>GDP per Capita vs Happiness Score</h1>
+          <dic class="slide3">
+            <script src="jaa.js"></script>
+          </dic>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+</body>
+</html>
