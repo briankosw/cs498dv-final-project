@@ -15,40 +15,40 @@
   <div id="carouselExampleControls" class="carousel slide" data-ride="false" data-wrap="false" data-interval="false">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <h1 onclick="show()">About the Visualization</h1>
+          <button onclick="show()" style="font-size:50px;margin-left:350px;margin-top:5px">About the Visualization</button>
           <div class="description">
           <p>
-            I was always curious about global happiness. While I have my own theories on this topic, 
-            I decided to use data and data visualization to hopefully help answer some of the questions regarding happpiness. 
-            Using the Global Happiness Survey dataset found on Kaggle, I hoped to answer two questions: Which countries 
-            and continents are happiest? Does a country's financial power contribute to its citizen's happiness? 
+              I was always curious about global happiness. While I have my own theories on this topic, I decided to use data and data visualization to hopefully help answer some of the questions regarding happiness. Using the Global Happiness Survey dataset found on Kaggle, I hoped to answer two questions: Which continents are happiest? Does a country's financial power contribute to its citizen's happiness?
+          </p>
+          <p style="font-weight:bold">
+            Layout and Visual Structures
           </p>
           <p>
-            To best narrate and convey the information as well as my own interpretation and understanding gained from the data, I 
-            chose the interactive slideshow. I felt that this visual structure was the best because I can present the audience
-            with the visualization, which they can filter and play around with, and provide my own analysis derived from the same 
-            visualization. 
+              To best narrate and convey the information as well as my own interpretation and understanding gained from the data, I chose the interactive slideshow. I felt that this visual structure was the best because I can present the audience with the visualization, which they can filter and play around with, and provide my own analysis derived from the same visualization. For the bar chart, I had a nested categorical x-axis and a quantitative y-axis, so I felt that a nested bar chart was most appropriate. The scale for the y-axis is a uniform axis from 0-8. For the second chart, I had two quantitative variables which are very much related, so I used a scatterplot. The y-axis was scaled from 2.5-8.0 uniformly and the x-axis was scaled from 0-1.8 because I wanted it to focus into the data as much as possible for better visualization.
+          </p>
+          <p style="font-weight:bold">
+            Scenes
           </p>
           <p>
-            There are 3 scenes in my interactive slideshow: a choropleth, a bar chart, and a scatterplot. Users can navigate 
-            through different scenes by clicking on the leftward and rightward triggers located on each end of the screen. Within
-            the choropleth scene, users have more triggers to change the data that the choropleth contains, which is both intuitive
-            and conveys additional interesting information.
+              There are 2 scenes in my interactive slideshow: a bar chart and a scatterplot. Users can navigate through different scenes by clicking on the leftward and rightward triggers located on each end of the screen. Each scene has different charts with corresponding parameters, a consistent annotation style, and triggers.
+          </p>
+          <p style="font-weight:bold">
+            Annotation
           </p>
           <p>
-            I really wanted to keep the annotation consistent, so I decided to use the same tooltip throughout all the scenes. The
-            user can hover over each country in the choropleth, the bars in the bar chart, and the points in the scatterplot and will 
-            receive the same tooltip design. When the user puts their mouse on a data point in any of the visualizations, it will show
-            the tool tip with important data, and the tool tip will disappear once the user removes their mouse from the data point.
+              I really wanted to keep the annotation consistent, so I decided to use the same tooltip throughout all the scenes. The user can hover over each bars in the bar chart and the points in the scatterplot and will receive the same tooltip design. When the user puts their mouse on a data point in any of the visualizations, it will show the tool tip with important data, and the tool tip will disappear once the user removes their mouse from the data point. While some of slack and piazza say that tooltips aren’t annotations, I completely disagree. The main principle behind my visualization ideas was of interactivity. Instead of spoon-feeding the users the information by doing the traditional arrow annotations, I really wanted the users to filter through and find out interesting data points and trends themselves. To enable this principle, I decided to go with tooltips instead of arrow annotations.
+          </p>
+          <p style="font-weight:bold">
+            Parameters
           </p>
           <p>
-            There are two parameters in this interactive slideshow. The first is the slide state, which can be controlled by the slide 
-            controls. The second is the years in the choropleth scene, in which the users can to display different data from different
-            years.
+              There are two parameters in this interactive slideshow. The first is the slide state, which will present different slides. The second is the data presented in the scatterplot. There’s data for 10 different regions in the scatterplot, and users can select or deselect which regions to visualize or not visualize.
+          </p>
+          <p style="font-weight:bold">
+            Triggers
           </p>
           <p>
-            Closely related to the parameters, the triggers are also twofold. The first one controls going forward and backward in the 
-            slideshow, while the second trigger controls the year of the data shown in the choropleth.
+              Closely related to the parameters, the triggers are also twofold. The first one controls going forward and backward in the slideshow, while the second trigger controls which regions’ data to display in the scatterplot.
           </p>
 
           </div>
@@ -60,19 +60,7 @@
   </script>
         </div>
         <div class="carousel-item">
-          <h2 id="maptitle">2015 Happiness Scores in Countries</h2>
-          <div class="slide1">
-            <script src="test.js"></script>
-          </div>
-          <div class="btn-group" role="group" aria-label="Basic example">
-              <button type="button" class="btn btn-secondary" value="2015" onclick="get_map(this.value)">2015</button>
-              <button type="button" class="btn btn-secondary" value="2016" onclick="get_map(this.value)">2016</button>
-              <button type="button" class="btn btn-secondary" value="2017" onclick="get_map(this.value)">2017</button>
-            </div>
-        <p>(Black means no data was available in that country.)</p>
-        </div>
-        <div class="carousel-item">
-          <h2>Average Happiness Scores in Different Continents/Years</h2>
+          <h2>Average Happiness Scores in Different Regions/Years</h2>
           <div class="slide2">
               <script>
     var svg1 = d3.select(".slide2").append("svg").attr("width", 1100).attr("height", 450),
@@ -94,15 +82,10 @@ var y = d3.scaleLinear()
 var z = d3.scaleOrdinal()
     .range(["#2171b5", "#238b45", "#d94701"]);
 
-var tip1 = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    console.log(d)
-    return "<strong>Year:</strong>" + " 20" + d.key.substring(5,7) + "<br><strong>Average Happiness Score: </strong>" + d.value.toFixed(3);
-  });
-  
-  svg1.call(tip1);
+var div1 = d3.select(".slide2").append("div")	
+    .attr("class", "tooltip1")				
+    .style("opacity", 0);
+
 
 d3.csv("data/data1.csv", function(d, i, columns) {
   for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
@@ -129,8 +112,19 @@ d3.csv("data/data1.csv", function(d, i, columns) {
       .attr("width", x1.bandwidth())
       .attr("height", function(d) { return height - y(d.value); })
       .attr("fill", function(d) { return z(d.key); })
-      .on('mouseover', tip1.show)
-      .on('mouseout', tip1.hide);
+      .on("mouseover", function(d) {		
+            div1.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div1.html("<strong>Year:</strong>" + " 20" + d.key.substring(5,7) + "<br><strong>Average Happiness Score: </strong>" + d.value.toFixed(3))	
+                .style("left", (d3.event.pageX -150) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div1.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        })
 
   g.append("g")
       .attr("class", "axis")
@@ -147,7 +141,14 @@ d3.csv("data/data1.csv", function(d, i, columns) {
       .attr("fill", "#000")
       .attr("font-weight", "bold")
       .attr("text-anchor", "start")
-      .text("Average Happiness Score");
+    g.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - 50)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Average Happiness Score");   
+
 
   var legend = g.append("g")
       .attr("font-family", "sans-serif")
@@ -171,6 +172,12 @@ d3.csv("data/data1.csv", function(d, i, columns) {
       .text(function(d) { return "20" + d.substring(5,7);});
 });
                   </script>
+                  <p>Regions</p>
+                  <p></p>
+                  <p></p>
+                  <p>
+                      There aren’t any general macro trends in all the regions. The Asian regions and the Australia/New Zealand regions mostly stayed at similar happiness levels, while the Americas and the Africa and Middle East regions all went down. The European regions all went up. Australia/NZ, North America, and Western Europe are significantly higher in happiness levels compared to other regions. 
+                      </p>
           </div>
         </div>
         <div class="carousel-item">
@@ -178,6 +185,9 @@ d3.csv("data/data1.csv", function(d, i, columns) {
           <dic class="slide3">
             <script src="jaa.js"></script>
           </dic>
+          <p><br> </p>
+          <p>It’s very clear from the chart that there’s a relatively high, positive correlation between happiness and economic power. Most of the African countries are concentrated in the bottom left corner, while the North American and European countries are highly concentrated in the upper-left. It’s interesting to note that the economically well-off and happy regions, such as Western Europe and North America, have very high happiness and very little variance in GDP per capita.
+            </p>
         </div>
       </div>
       <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">

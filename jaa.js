@@ -32,20 +32,12 @@ var yAxis = d3.axisLeft()
     .tickSize(-wid)
     .scale(yscale)
 
-var color1 = d3.scaleOrdinal(d3.schemeCategory20);
+var color1 = d3.scaleOrdinal(d3.schemeCategory10);
 
-var tip3 = d3.tip()
-            .attr("class", "d3-tip")
-            .offset([-10, 30])
-            .html(function(d) {
-                console.log(d);
-                return "<strong>Country: </strong>" + d.Country +
-                       "<br><strong>Region: </strong>" + d.Region +
-                       "<br><strong>Happiness Score: </strong>" + d.HappinessScore +
-                       "<br><strong>Economy: </strong>" + d.Economy;
-            });
+var div = d3.select(".slide3").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
 
-svg.call(tip3);
 
 d3.csv("data/2015.csv", function(error, data) {
     data.forEach(function(d) {
@@ -92,10 +84,15 @@ d3.csv("data/2015.csv", function(error, data) {
       .text("GDP per Capita scaled");
 
     svg3.append("text")             
-      .attr("x", wid + 100)
+      .attr("x", wid + 80)
       .attr("y", hei/2 + 35)
       .style("text-anchor", "middle")
-      .text("Hover over the legend!");
+      .text("Click on the legend");
+    svg3.append("text")             
+      .attr("x", wid + 95)
+      .attr("y", hei/2 + 50)
+      .style("text-anchor", "middle")
+      .text("and hover over the plot!");
 
     var group = svg3.selectAll("g.bubble")
         .data(data)
@@ -110,8 +107,23 @@ d3.csv("data/2015.csv", function(error, data) {
         .attr("r", 9)
         .style("fill", function(d) {
             return color1(d.Region);
-        }).on("mouseover", tip3.show)
-        .on("mouseout", tip3.hide);
+        })
+        .on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div	.html("<strong>Country: </strong>" + d.Country +
+            "<br><strong>Region: </strong>" + d.Region +
+            "<br><strong>Happiness Score: </strong>" + d.HappinessScore +
+            "<br><strong>Economy: </strong>" + d.Economy)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);	
+        });
 
     var legend1 = svg3.selectAll(".legend")
         .data(color1.domain())
@@ -136,6 +148,41 @@ d3.csv("data/2015.csv", function(error, data) {
             return d;
         });
 
+    var clicked=["Middle East and Northern Africa", "Western Europe", "Southeastern Asia", 
+                 "North America", "Easter Asia", "Australia and New Zealand", "Latin America and Caribbean",
+                "Central and Eastern Europe", "Sub-Saharan Africa", "Southern Asia"];
+
+    legend1.on("click", function(d) {
+        if(!clicked.includes(d)) {
+            d3.selectAll(".bubble")
+                .filter(function (e) {
+                    return e.Region == d;
+                })
+                .style("opacity", 1)
+            d3.select(this).style("opacity", 1);
+            clicked.push(d);
+        } else {
+            d3.selectAll(".bubble")
+                .filter(function (e) {
+                    return e.Region == d;
+                })
+                .style("opacity", 0.1);
+            d3.select(this).style("opacity", 0.3);
+            clicked.splice(clicked.indexOf(d), 1);
+        }
+/*
+        if(clicked != d) {
+            d3.selectAll(".bubble")
+                .filter(function (e) {
+                    return e.Region !== d;
+                }).style("opacity", 0.1)
+            clicked=d;
+        } else {
+            clicked="";
+        }
+        */
+    });
+/*
     legend1.on("mouseover", function(type) {
             d3.selectAll(".legend")
                 .style("opacity", 0.1);
@@ -154,4 +201,5 @@ d3.csv("data/2015.csv", function(error, data) {
             d3.selectAll(".bubble")
                 .style("opacity", 1);
         });
+        */
 });
